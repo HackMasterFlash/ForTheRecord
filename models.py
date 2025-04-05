@@ -17,12 +17,12 @@ class Media(db.Model):
     RatingSource = db.Column(db.String(96)
     RatingValue = db.Column(db.float)
 
-class MediaSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Media
-        load_instance = True
-        sqla_session = db.session
+# class MediaSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Media
+#         load_instance = True
+#         sqla_session = db.session
 
-one_media_scheme = MediaSchema()
-all_media_scheme = MediaSchema(many=True)    
+# one_media_scheme = MediaSchema()
+# all_media_scheme = MediaSchema(many=True)    
     
