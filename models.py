@@ -14,7 +14,7 @@ class Media(db.Model):
     Source = db.Column(db.String(96))
     DateViewed = db.Column(db.DateTime, default=datetime.now(datetime.UTC))
     PersonalRating = db.Column(db.Integer)
-    RatingSource = db.Column(db.String(96)
+    RatingSource = db.Column(db.String(96))
     RatingValue = db.Column(db.float)
 
 # class MediaSchema(ma.SQLAlchemyAutoSchema):
