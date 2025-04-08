@@ -23,10 +23,10 @@ def create_app(object_name):
     migrate.init_app(app, db)
 
     from .auth import create_module as auth_create_module
-    from .blog import create_module as blog_create_module
+    from .media import create_module as media_create_module
     from .main import create_module as main_create_module
     auth_create_module(app)
-    blog_create_module(app)
+    media_create_module(app)
     main_create_module(app)
 
     return app
