@@ -1,7 +1,7 @@
 # models.py
 
 from datetime import datetime
-from config import db, ma
+from config import db # , ma
 
 class Media(db.Model):
     __tablename__ = "media"

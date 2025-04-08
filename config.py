@@ -1,14 +1,13 @@
 # config.py
-
 ### This file is used to do flask configuration
-# This version was from something I started so long ago that I don't remember where I got it from
-import pathlib
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
 # import connexion
 # from flask_sqlalchemy import SQLAlchemy
-
 # from flask_marshmallow import Marshmallow
-
-basedir = pathlib.Path(__file__).parent.resolve()
 # connex_app = connexion.App(__name__, specification_dir=basedir)
 
 # app = connex_app.app
@@ -20,11 +19,16 @@ basedir = pathlib.Path(__file__).parent.resolve()
 
 # This version comes from the book "Mastering Flask Web Development" by Daniel Gaspar and Jack Stouffer
 class Config(object): 
-    pass 
+    SECRET_KEY = 'my_secret_key_to_change'
+    RECAPTCHA_PUBLIC_KEY = "6LdKkQQTAAAAAE_also_to_change"
+    RECAPTCHA_PRIVATE_KEY = '6LdKkQQTAAAAAMYroks_also_to_change'
+    POSTS_PER_PAGE = 10 
  
 class ProdConfig(Config): 
-    pass 
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database.db') 
  
 class DevConfig(Config): 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI =  f"sqlite:///{basedir / 'media.db'}"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database.db')
