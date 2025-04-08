@@ -1,7 +1,7 @@
 import os
 from webapp import db, migrate, create_app
 from webapp.auth.models import User
-from webapp.blog.models import Post, Tag
+from webapp.media.models import Post, Tag
 
 
 env = os.environ.get('WEBAPP_ENV', 'dev')
