@@ -13,3 +13,23 @@ Activate with: source .venv/bin/activate
 
 Install packages
 uv pip install <package name>
+
+I like to use the python-dotenv package to load secret keys that I do not want to have included in a public repository.
+
+In a .env file include your key=value collections of secrets
+
+API_KEY=my_special_key
+DEBUG=True
+DB_URL=sqlite:///database.db
+
+
+Then in your python code:
+
+#
+import os
+from dotenv import load_dotenv
+
+load_detenv()
+
+DEBUG = os.environ.get("DEBUG")
+API_KEY = os.environ.get("API_KEY")
