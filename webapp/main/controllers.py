@@ -9,4 +9,4 @@ main_blueprint = Blueprint(
 
 @main_blueprint.route('/')
 def index():
-    return redirect(url_for('blog.home'))
+    return redirect(url_for('media.home'))
