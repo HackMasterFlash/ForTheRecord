@@ -1,9 +1,15 @@
-from webapp.media.models import db, Actor, Movie, Director
+import sys
 import os
 from dotenv import load_dotenv
-# from sqlalchemy.ext.declarative import declarative_base
-# from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy import inspect
+
+# Assuming your module 'my_module.py' is in a directory called 'external_modules'
+module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+if module_path not in sys.path:
+    sys.path.insert(0, module_path)  # Add to the beginning for priority
+
+from webapp.media.models import db, Actor, Movie, Director
 
 # Load environment variables from .env file
 load_dotenv()
@@ -11,7 +17,8 @@ load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database URL (replace with your actual database URL)
-DATABASE_URL = 'sqlite:///' + os.path.join(basedir, 'instance', 'mydatabase.db')
+DATABASE_URL = 'sqlite:///' + os.path.join('..', 'instance', 'mydatabase.db')
+print('Trying to connect to database {0}'.format(DATABASE_URL))
 
 # Create a SQLAlchemy engine
 engine = db.create_engine(DATABASE_URL)
