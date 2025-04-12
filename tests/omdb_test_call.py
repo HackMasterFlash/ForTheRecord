@@ -20,7 +20,7 @@ def get_jaws_movie_data():
 
     base_url = "http://www.omdbapi.com/"
     params = {
-        "t": "Jaws",  # 't' parameter for movie title
+        "t": "Apollo 13",  # 't' parameter for movie title
         "apikey": api_key,
         "type": "movie"  # Explicitly specify we are looking for a movie
     }
