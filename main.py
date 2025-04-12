@@ -2,7 +2,6 @@
 # The app driver code for my ForTheRecord media consuming database interface
 # This will nominally be a flask app
 
-
 # To start I am going to follow the "Mastering Flask Web Development" by Daniel Gaspar example and use 
 # the config.py file to set up the app
 
