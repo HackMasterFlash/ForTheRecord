@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Post Creation{% endblock %}
+{% block title %}Entry Creation{% endblock %}
 {% block body %}
 <div class="p-4 shadow-sm">
     <div class="row">
         <div class="col">
-            <h1>Create a New Post</h1>
+            <h1>Create a New Entry</h1>
         </div>
     </div>
 
 <div class="row">
-    <form method="POST" action="{{ url_for('.new_post') }}">
+    <form method="POST" action="{{ url_for('.new_entry') }}">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{ form.title.label }}
