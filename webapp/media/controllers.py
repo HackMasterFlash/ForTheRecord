@@ -1,12 +1,9 @@
 import datetime
 from sqlalchemy import desc, func
 from flask import render_template, Blueprint, flash, redirect, url_for, current_app, abort
-from flask_login import login_required, current_user
-from .models import db, Post, Tag, Comment, tags
+from .models import db, Actor, Movie, Director
 
 from .forms import CommentForm, PostForm
-from ..auth.models import User
-from ..auth import has_role
 
 media_blueprint = Blueprint(
     'media',
@@ -42,8 +39,6 @@ def home(page=1):
 
 
 @media_blueprint.route('/new', methods=['GET', 'POST'])
-@login_required
-@has_role('poster')
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
