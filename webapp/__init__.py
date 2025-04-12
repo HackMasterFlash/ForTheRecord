@@ -7,25 +7,23 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 
-def create_app(object_name):
+def create_app(the_config):
     """
     An flask application factory, as explained here:
     http://flask.pocoo.org/docs/patterns/appfactories/
 
     Arguments:
-        object_name: the python path of the config object,
+        the_config: the python path of the config object,
                      e.g. project.config.ProdConfig
     """
     app = Flask(__name__)
-    app.config.from_object(object_name)
+    app.config.from_object(the_config)
 
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from .auth import create_module as auth_create_module
     from .media import create_module as media_create_module
     from .main import create_module as main_create_module
-    auth_create_module(app)
     media_create_module(app)
     main_create_module(app)
 
