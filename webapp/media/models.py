@@ -101,7 +101,7 @@ try:
     db.commit()
 
     # Create some movies and associate actors
-    movie1 = Movie(title="Inception", director=director1 actors=[actor1, actor2])
+    movie1 = Movie(title="Inception", director=director1, actors=[actor1, actor2])
     movie2 = Movie(title="Apollo 13", director=director2, 
                    actors=[actor3, actor4],
                    year=1995, IsMovie=True,
