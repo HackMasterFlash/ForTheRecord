@@ -15,35 +15,64 @@ engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 
 # Define the association table for the many-to-many relationship between Movie and Actor
-movie_actor_association = Table(
+movie_actor_association = db.Table(
     'movie_actor', Base.metadata,
-    Column('movie_id', Integer, ForeignKey('movies.id'), primary_key=True),
-    Column('actor_id', Integer, ForeignKey('actors.id'), primary_key=True)
+    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'), primary_key=True),
+    db.Column('actor_id', db.Integer, db.ForeignKey('actors.id'), primary_key=True)
+)
+# between movie and director
+movie_director_association = db.Table(
+    'movie_director', Base.metadata,
+    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'), primary_key=True),
+    db.Column('director_id', db.Integer, db.ForeignKey('directors.id'), primary_key=True)
 )
 
 # Define the Movie model
 class Movie(Base):
     __tablename__ = 'movies'
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    director = Column(String)
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    title = db.Column(db.String, index=True)
+    director = relationship("Director", secondary=movie_director_association, back_populates="movies")
     actors = relationship("Actor", secondary=movie_actor_association, back_populates="movies")
+    year = db.Column(db.Integer)
+    IsMovie = db.Column(db.Boolean)
+    # EpisodeTitle = db.Column(db.String(96))
+    Season = db.Column(db.Integer)
+    Episode = db.Column(db.Integer)
+    Source = db.Column(db.String(96))
+    DateViewed = db.Column(db.DateTime, default=datetime.now(datetime.UTC))
+    PersonalRating = db.Column(db.Integer)
+    RatingSource = db.Column(db.String(96))
+    RatingValue = db.Column(db.float)
 
     def __repr__(self):
         return f"<Movie(title='{self.title}', director='{self.director}')>"
+    
 
 # Define the Actor model
 class Actor(Base):
     __tablename__ = 'actors'
 
-    id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String)
-    last_name = Column(String)
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
     movies = relationship("Movie", secondary=movie_actor_association, back_populates="actors")
 
     def __repr__(self):
-        return f"<Actor(first_name='{self.first_name}', last_name='{self.last_name}')>"
+        return f"<Actor('{self.first_name}' '{self.last_name}')>"
+    
+# Define the Director model
+class Director(Base):
+    __tablename__ = 'directors'
+
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
+    movies = relationship("Movie", secondary=movie_director_association, back_populates="directors")
+
+    def __repr__(self):
+        return f"<Director(f'{self.first_name}' '{self.last_name}')>"
 
 # Create the database tables
 Base.metadata.create_all(engine)
@@ -60,16 +89,24 @@ try:
     # Create some actors
     actor1 = Actor(first_name="Leonardo", last_name="DiCaprio")
     actor2 = Actor(first_name="Brad", last_name="Pitt")
-    actor3 = Actor(first_name="Meryl", last_name="Streep")
+    actor3 = Actor(first_name="Kevin", last_name="Bacon")
     actor4 = Actor(first_name="Tom", last_name="Hanks")
+
+    # Create some directors
+    director1 = Director(first_name="Christopher", last_name="Nolan")
+    director2 = Director(first_name="Ron", last_name="Howard")
+    director3 = Director(first_name="Robert", last_name="Zemeckis")
 
     db.add_all([actor1, actor2, actor3, actor4])
     db.commit()
 
     # Create some movies and associate actors
-    movie1 = Movie(title="Inception", director="Christopher Nolan", actors=[actor1, actor2])
-    movie2 = Movie(title="The Departed", director="Martin Scorsese", actors=[actor1, actor3])
-    movie3 = Movie(title="Forrest Gump", director="Robert Zemeckis", actors=[actor4])
+    movie1 = Movie(title="Inception", director=director1 actors=[actor1, actor2])
+    movie2 = Movie(title="Apollo 13", director=director2, 
+                   actors=[actor3, actor4],
+                   year=1995, IsMovie=True,
+                   PersonalRating=10)
+    movie3 = Movie(title="Forrest Gump", director=director3, actors=[actor4])
     movie4 = Movie(title="Once Upon a Time in Hollywood", director="Quentin Tarantino", actors=[actor2, actor1])
 
     db.add_all([movie1, movie2, movie3, movie4])
@@ -95,54 +132,3 @@ finally:
     # Close the database session
     db.close()
 
-tags = db.Table(
-    'post_tags',
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))
-)
-
-
-class Post(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    text = db.Column(db.Text(), nullable=False)
-    publish_date = db.Column(db.DateTime(), default=datetime.datetime.now)
-    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
-    comments = db.relationship(
-        'Comment',
-        backref='post',
-        lazy='dynamic'
-    )
-    tags = db.relationship(
-        'Tag',
-        secondary=tags,
-        backref=db.backref('posts', lazy='dynamic')
-    )
-
-    def __init__(self, title=""):
-        self.title = title
-
-    def __repr__(self):
-        return "<Post '{}'>".format(self.title)
-
-
-class Comment(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    text = db.Column(db.Text(), nullable=False)
-    date = db.Column(db.DateTime(), default=datetime.datetime.now)
-    post_id = db.Column(db.Integer(), db.ForeignKey('post.id'))
-
-    def __repr__(self):
-        return "<Comment '{}'>".format(self.text[:15])
-
-
-class Tag(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    title = db.Column(db.String(255), nullable=False, unique=True)
-
-    def __init__(self, title=""):
-        self.title = title
-
-    def __repr__(self):
-        return "<Tag '{}'>".format(self.title)
