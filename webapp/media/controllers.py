@@ -25,10 +25,7 @@ media_blueprint = Blueprint(
 @media_blueprint.route('/')
 @media_blueprint.route('/<int:page>')
 def home(page=1):
-    movies = Movie.query.all() # .paginate(page,
-                                                     #              current_app.config.get('POSTS_PER_PAGE', 10),
-                                                      #             False)
-    # recent, top_tags = sidebar_data()
+    movies = Movie.query.all() 
 
     return render_template(
         'home.html',
@@ -36,47 +33,80 @@ def home(page=1):
     )
 
 
-@media_blueprint.route('/new', methods=['GET', 'POST'])
-def new_entry():
+@media_blueprint.route('/create', methods=['GET', 'POST'])
+def create_entry():
     form = MovieForm()
     if form.validate_on_submit():
         new_entry = Movie()
         new_entry.title = form.title.data
         new_entry.director = form.director.data
-        raw_cast = form.actors.data
-        actor_list = raw_cast.split(",")
-        actors = []
-        for str_actor in actor_list:
-            name = str_actor.split(' ')
-            actor = Actor(first_name=name[0], last_name=name[1])
-            actors.append(actor)
-        new_entry.actors = actors
-        strange_val = form.director.data
+        new_entry.actors = package_cast(form.actors.data)
         new_entry.year = form.year
         db.session.add(new_entry)
         db.session.commit()
         flash('Entry added', 'info')
-        #return redirect(url_for('.post', post_id=new_post.id))
-    return render_template('new.html', form=form)
+        return redirect(url_for('.read_entry', movie_id=new_entry.id))   # this may not exist yet
+    return render_template('create.html', form=form)
 
+def package_cast(data):
+    raw_cast = data
+    actor_list = raw_cast.split(",")
+    actors = []
+    for str_actor in actor_list:
+        name = str_actor.split(' ')
+        actor = Actor(first_name=name[0], last_name=name[1])
+        actors.append(actor)
+    return actors
 
-@media_blueprint.route('/edit/<int:movie_id>', methods=['GET', 'POST'])
-def edit_movie(movie_id):
+@media_blueprint.route('/read/<int:movie_id>', methods=['GET', 'POST'])
+def read_entry(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+
+    form = MovieForm()
+    form.title.data = movie.title
+    form.director.data = movie.director
+    form.actors.data = movie.actors_to_string()
+    form.year.data = movie.year
+    return render_template('read.html', form=form, movie=movie)
+
+@media_blueprint.route('/update/<int:movie_id>', methods=['GET', 'POST'])
+def update_entry(movie_id):
     movie = Movie.query.get_or_404(movie_id)
 
     form = MovieForm()
     if form.validate_on_submit():
         movie.title = form.title.data
         movie.director = form.director.data
+        movie.actors = package_cast(form.actors.data)
+        movie.year = form.year.data
         movie.DateViewed = datetime.datetime.now()
         db.session.merge(movie)
         db.session.commit()
-        return redirect(url_for('.post', movie_id=movie.id))
+        return redirect(url_for('.display', movie_id=movie.id))
     form.title.data = movie.title
     form.director.data = movie.director
-    return render_template('edit.html', form=form, movie=movie)
+    form.actors.data = movie.actors_to_string()
+    form.year.data = movie.year
+    return render_template('update.html', form=form, movie=movie)
     
+@media_blueprint.route('/delete/<int:movie_id>', methods=['GET', 'POST'])
+def delete_entry(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
 
+    form = MovieForm()
+    if form.validate_on_submit():
+        movie.title = form.title.data
+        movie.director = form.director.data
+        movie.actors = package_cast(form.actors.data)
+        movie.year = form.year.data
+        db.session.delete(movie)
+        db.session.commit()
+        return redirect(url_for('.home', movie_id=movie.id))
+    form.title.data = movie.title
+    form.director.data = movie.director
+    form.actors.data = movie.actors_to_string()
+    form.year.data = movie.year
+    return render_template('delete.html', form=form, movie=movie)
 
 # @media_blueprint.route('/post/<int:post_id>', methods=('GET', 'POST'))
 # def post(post_id):
