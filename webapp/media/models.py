@@ -31,6 +31,14 @@ class Movie(db.Model):
     def __repr__(self):
         return f"<Movie(title='{self.title}', director='{self.director}', id='{self.id}')>"
     
+    def actors_to_string(self):
+        result = ""
+        for i, actor in enumerate(self.actors):
+            if i == 0:
+                result = "{0}".format(actor)
+            else:
+                result = "{0}, {1}".format(result, actor)
+    
 
 # Define the Actor model
 class Actor(db.Model):
