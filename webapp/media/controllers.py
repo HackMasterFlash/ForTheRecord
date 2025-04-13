@@ -86,12 +86,13 @@ def update_entry(movie_id):
         movie.actors = package_cast(form.actors.data)
         movie.year = form.year.data
         movie.DateViewed = datetime.datetime.now()
-        db.session.merge(movie)
+        db.session.update(movie)
         db.session.commit()
         return redirect(url_for('.display', movie_id=movie.id))
     form.title.data = movie.title
     form.director.data = movie.director
     form.actors.data = movie.actors_to_string()
+    the_Actors = movie.actors_to_string()
     form.year.data = movie.year
     return render_template('update.html', form=form, movie=movie)
     
