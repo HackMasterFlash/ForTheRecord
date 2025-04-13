@@ -2,17 +2,6 @@
 {% import 'macros.html' as macros %}
 {% block title %}For The Record{% endblock %}
 {% block leftbody %}
-<!--
-{% for movie in movies %}
-<p>{{movie.title}}</p>
-<p>       Director: {{movie.director}}</p>
-<p>       Cast: 
-    {% for actor in movie.actors %}
-    {{actor.first_name}} {{actor.last_name}}
-    {% endfor %}
-</p>
-{% endfor %}
--->
- 
+<input class="btn btn-primary" type="submit" value="Create">
 {{ macros.render_entries(movies, pagination=False) }}
 {% endblock %}
