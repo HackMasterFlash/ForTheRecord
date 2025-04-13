@@ -35,9 +35,10 @@ class Movie(db.Model):
         result = ""
         for i, actor in enumerate(self.actors):
             if i == 0:
-                result = "{0}".format(actor)
+                result = "{0} {1}".format(actor.first_name,actor.last_name)
             else:
-                result = "{0}, {1}".format(result, actor)
+                result = "{0}, {1} {2}".format(result, actor.first_name, actor.last_name)
+        return result
     
 
 # Define the Actor model
