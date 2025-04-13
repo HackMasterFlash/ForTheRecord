@@ -3,7 +3,7 @@ from sqlalchemy import desc, func
 from flask import render_template, Blueprint, flash, redirect, url_for, current_app, abort
 from .models import db, Actor, Movie, Director
 
-from .forms import CommentForm, PostForm
+from .forms import CommentForm, MovieForm
 
 media_blueprint = Blueprint(
     'media',
@@ -38,12 +38,21 @@ def home(page=1):
 
 @media_blueprint.route('/new', methods=['GET', 'POST'])
 def new_entry():
-    form = PostForm()
+    form = MovieForm()
     if form.validate_on_submit():
         new_entry = Movie()
         new_entry.title = form.title.data
-        #new_entry.director = form.text.data
-        strange_val = form.text.data
+        new_entry.director = form.director.data
+        raw_cast = form.actors.data
+        actor_list = raw_cast.split(",")
+        actors = []
+        for str_actor in actor_list:
+            name = str_actor.split(' ')
+            actor = Actor(first_name=name[0], last_name=name[1])
+            actors.append(actor)
+        new_entry.actors = actors
+        strange_val = form.director.data
+        new_entry.year = form.year
         db.session.add(new_entry)
         db.session.commit()
         flash('Entry added', 'info')
@@ -51,23 +60,22 @@ def new_entry():
     return render_template('new.html', form=form)
 
 
-# @media_blueprint.route('/edit/<int:id>', methods=['GET', 'POST'])
-# def edit_post(id):
-#     post = Post.query.get_or_404(id)
-#     # We want that the current user can edit is own posts
-#     if current_user.id == post.user.id:
-#         form = PostForm()
-#         if form.validate_on_submit():
-#             post.title = form.title.data
-#             post.text = form.text.data
-#             post.publish_date = datetime.datetime.now()
-#             db.session.merge(post)
-#             db.session.commit()
-#             return redirect(url_for('.post', post_id=post.id))
-#         form.title.data = post.title
-#         form.text.data = post.text
-#         return render_template('edit.html', form=form, post=post)
-#     abort(403)
+@media_blueprint.route('/edit/<int:movie_id>', methods=['GET', 'POST'])
+def edit_movie(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+
+    form = MovieForm()
+    if form.validate_on_submit():
+        movie.title = form.title.data
+        movie.director = form.director.data
+        movie.DateViewed = datetime.datetime.now()
+        db.session.merge(movie)
+        db.session.commit()
+        return redirect(url_for('.post', movie_id=movie.id))
+    form.title.data = movie.title
+    form.director.data = movie.director
+    return render_template('edit.html', form=form, movie=movie)
+    
 
 
 # @media_blueprint.route('/post/<int:post_id>', methods=('GET', 'POST'))
