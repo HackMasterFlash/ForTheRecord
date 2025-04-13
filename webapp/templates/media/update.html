@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Media Entry{% endblock %}
+{% block title %}Update Media Entry{% endblock %}
 {% block body %}
 <div class="p-4 shadow-sm">
     <div class="row">
@@ -9,8 +9,10 @@
     </div>
 
 <div class="row">
-    <form method="POST" action="{{ url_for('.edit_movie', movie_id=movie.id) }}">
+    <form method="POST" action="{{ url_for('.update_entry', movie_id=movie.id) }}">
         {{ form.hidden_tag() }}
+        {{ macros.render_form_entry(form) }}
+  <!--
         <div class="form-group">
             {{ form.title.label }}
             {% if form.title.errors %}
@@ -29,6 +31,7 @@
             {% endif %}
             {{ form.director(id="editor", class_='form-control') }}
         </div>
+        -->
         <input class="btn btn-primary" type="submit" value="Submit">
     </form>
 </div>
