@@ -60,7 +60,10 @@ def package_cast(data):
 
 @media_blueprint.route('/read/<int:movie_id>', methods=['GET', 'POST'])
 def read_entry(movie_id):
-    movie = Movie.query.get_or_404(movie_id)
+    if movie_id < 0:
+        movie = Movie(title='New Entry')
+    else:
+        movie = Movie.query.get_or_404(movie_id)
 
     form = MovieForm()
     form.title.data = movie.title
@@ -71,7 +74,10 @@ def read_entry(movie_id):
 
 @media_blueprint.route('/update/<int:movie_id>', methods=['GET', 'POST'])
 def update_entry(movie_id):
-    movie = Movie.query.get_or_404(movie_id)
+    if movie_id < 0:
+        movie = Movie(title='Provide Entry')
+    else:
+        movie = Movie.query.get_or_404(movie_id)
 
     form = MovieForm()
     if form.validate_on_submit():
@@ -91,7 +97,10 @@ def update_entry(movie_id):
     
 @media_blueprint.route('/delete/<int:movie_id>', methods=['GET', 'POST'])
 def delete_entry(movie_id):
-    movie = Movie.query.get_or_404(movie_id)
+    if movie_id < 0:
+        movie = Movie(title='Provide Entry')
+    else:
+        movie = Movie.query.get_or_404(movie_id)
 
     form = MovieForm()
     if form.validate_on_submit():
