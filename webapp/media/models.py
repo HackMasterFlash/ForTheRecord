@@ -29,7 +29,7 @@ class Movie(db.Model):
     RatingValue = db.Column(db.Float)
 
     def __repr__(self):
-        return f"<Movie(title='{self.title}', director='{self.director}')>"
+        return f"<Movie(title='{self.title}', director='{self.director}', id='{self.id}')>"
     
 
 # Define the Actor model
