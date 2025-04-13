@@ -11,6 +11,8 @@
 <div class="row">
     <form method="POST" action="{{ url_for('.create_entry') }}">
         {{ form.hidden_tag() }}
+        {{ macros.render_form_entry(form) }}
+        <!--
         <div class="form-group">
             {{ form.title.label }}
             {% if form.title.errors %}
@@ -47,6 +49,7 @@
             {% endif %}
             {{ form.year(id="editor", class_='form-control') }}
         </div>
+    -->
         <input class="btn btn-primary" type="submit" value="Submit">
     </form>
 </div>
