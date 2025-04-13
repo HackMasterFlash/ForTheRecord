@@ -23,5 +23,5 @@ class MovieForm(Form):
         Length(max=255)
         ])
     director = StringField('Director')
-    actors = StringField('Cast')
+    actors = StringField('Cast', [Length(max=255)])
     year = IntegerField('Year')
