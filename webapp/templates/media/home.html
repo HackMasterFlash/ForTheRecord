@@ -2,7 +2,16 @@
 {% import 'macros.html' as macros %}
 {% block title %}Home{% endblock %}
 {% block leftbody %}
-
-{{ macros.render_entries(entries) }}
-{{ macros.render_pagination(posts, 'media.home') }}
+{% for movie in movies %}
+<p>{{movie.title}}</p>
+<p>       Director: {{movie.director}}</p>
+<p>       Cast: 
+    {% for actor in movie.actors %}
+    {{actor.first_name}} {{actor.last_name}}
+    {% endfor %}
+</p>
+{% endfor %}
+<p>The SQL URL should be = {{ config.SQLALCHEMY_DATABASE_URI }}</p>
+ 
+{{ macros.render_entries(movies, pagination=False) }}
 {% endblock %}
