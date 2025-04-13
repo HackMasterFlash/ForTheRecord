@@ -85,13 +85,13 @@
     {{ form.director(id="editor", class_='form-control') }}
 </div>
 <div class="form-group">
-    {{ form.cast.label }}
-    {% if form.cast.errors %}
-    {% for e in form.cast.errors %}
+    {{ form.actors.label }}
+    {% if form.actors.errors %}
+    {% for e in form.actors.errors %}
     <p class="help-block">{{ e }}</p>
     {% endfor %}
     {% endif %}
-    {{ form.cast(id="editor", class_='form-control') }}
+    {{ form.actors(id="editor", class_='form-control') }}
 </div>
 <div class="form-group">
     {{ form.year.label }}
