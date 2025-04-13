@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Post Creation{% endblock %}
+{% block title %}Media Entry{% endblock %}
 {% block body %}
 <div class="p-4 shadow-sm">
     <div class="row">
         <div class="col">
-            <h1>Edit Post</h1>
+            <h1>Edit Media Entry</h1>
         </div>
     </div>
 
 <div class="row">
-    <form method="POST" action="{{ url_for('.edit_post', id=post.id) }}">
+    <form method="POST" action="{{ url_for('.edit_movie', movie_id=movie.id) }}">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{ form.title.label }}
@@ -21,13 +21,13 @@
             {{ form.title(class_='form-control') }}
         </div>
         <div class="form-group">
-            {{ form.text.label }}
-            {% if form.text.errors %}
-            {% for e in form.text.errors %}
+            {{ form.director.label }}
+            {% if form.director.errors %}
+            {% for e in form.director.errors %}
             <p class="help-block">{{ e }}</p>
             {% endfor %}
             {% endif %}
-            {{ form.text(id="editor", class_='form-control') }}
+            {{ form.director(id="editor", class_='form-control') }}
         </div>
         <input class="btn btn-primary" type="submit" value="Submit">
     </form>
@@ -36,7 +36,7 @@
     {% endblock %}
 
 {% block js %}
-<script src="//cdn.ckeditor.com/4.4.7/standard/ckeditor.js">
+<script src="//cdn.ckeditor.com/ckeditor5/45.0.0/ckeditor5.umd.js">
 </script>
 <script>
     CKEDITOR.replace('editor');
