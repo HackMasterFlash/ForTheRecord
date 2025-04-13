@@ -7,28 +7,17 @@
             <h1>{{ entry.title }}</h1>
         </div>
     </div>
-    <div class="row shadow-sm">
-        <div class="col-lg-6">
-            <p>Written By <a href="{{ url_for('media.posts_by_user', username=post.user.username) }}">{{ media.user.username }}</a> on {{ post.publish_date }}</p>
-        </div>
-        <div class="col-lg-6">
-            <p class="text-right"> Tags: {% for tag in tags %}
-                <a href="{{ url_for('media.posts_by_tag', tag_name=tag.title) }}">{{tag.title}}</a>
-                {% endfor %}
-            </p>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col">
             {{ media.text | safe }}
         </div>
     </div>
-    {% if current_user.id == media.user_id %}
+    
     <div class="col-lg-2">
-        <a href="{{ url_for('.edit_entry', id=post.id) }}" class="btn
-       btn-primary">Edit</a>
+        <a href="{{ url_for('.edit_entry', id=post.id) }}" class="btn btn-primary">Edit</a>
     </div>
-    {% endif %}
+    
 </div>
 <div class="p-4 shadow-sm">
     <div class="row">
@@ -63,25 +52,5 @@
         </div>
     </div>
 </div>
-<div class="p-4 shadow-sm">
-    <div class="row">
-        <div class="col">
-            <h4>Comments ({{ comments | length }})</h4>
-        </div>
-    </div>
-    <div class="row p-2">
-        <div class="col">
-            {% if comments | length == 0 %}
-            <p>There are no comments for this post.</p>
-            {% else %}
-            {% for comment in comments %}
-            <div class="shadow-sm p-2">
-                <dt>By: {{ comment.name }} on {{ comment.date }}</dt>
-                <dd>{{ comment.text }}</dd>
-            </div>
-            {% endfor %}
-            {% endif %}
-        </div>
-    </div>
-</div>
+
 {% endblock %}
