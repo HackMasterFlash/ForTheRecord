@@ -1,3 +1,4 @@
+<!--
 {% macro render_pagination(pagination, endpoint) %}
 <nav aria-label="Page navigation example">
     <ul class="pagination">
@@ -37,25 +38,28 @@
     </ul>
 </nav>
 {% endmacro %}
+-->
 
-{% macro render_posts(posts, pagination=True) %}
+{% macro render_entries(movies, pagination=True) %}
 {% if pagination %}
-{% set _posts = posts.items %}
+{% set _movies = movies.items %}
 {% else %}
-{% set _posts = posts %}
+{% set _movies = movies %}
 {% endif %}
 
-{% for post in _posts %}
+{% for movie in _movies %}
 <div >
-    <h1>
-        <a class="text-dark" href="{{ url_for('blog.post', post_id=post.id) }}">{{ post.title }}</a>
-    </h1>
+    <h3>
+        <a class="text-dark" href="{{ url_for('media.home') }}">{{ movie.title }}</a>
+    </h3>
 </div>
 <div class="row">
-    <div class="col">
-        {{ post.text | truncate(500) | safe }}
-        <a href="{{ url_for('blog.post', post_id=post.id) }}">Read More</a>
-    </div>
+    Director: {{ movie.director.first_name | truncate(500) | safe }} {{ movie.director.last_name | truncate(500) | safe }}
+</div>
+<div class="row"></div>
+    Cast: {% for actor in movie.actors %}
+    {{actor.first_name}} {{actor.last_name}}, 
+    {% endfor %}
 </div>
 {% endfor %}
 {% endmacro %}
