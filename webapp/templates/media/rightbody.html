@@ -7,7 +7,7 @@
 <ul class="list-group">
     {% for movie in _movies %}
     <li class="list-group-item">
-        <a href="{{ url_for('media.edit_movie', movie_id=movie.id) }}">{{ movie.title }}</a>
+        <a href="{{ url_for('media.update_entry', movie_id=movie.id) }}">{{ movie.title }}</a>
     </li>
     {% endfor %}
 </ul>
