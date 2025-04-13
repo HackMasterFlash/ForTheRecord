@@ -22,35 +22,33 @@ media_blueprint = Blueprint(
 #     return recent, top_tags
 
 
-# @media_blueprint.route('/')
-# @media_blueprint.route('/<int:page>')
-# def home(page=1):
-#     posts = Post.query.order_by(Post.publish_date.desc()).paginate(page,
-#                                                                    current_app.config.get('POSTS_PER_PAGE', 10),
-#                                                                    False)
-#     recent, top_tags = sidebar_data()
+@media_blueprint.route('/')
+@media_blueprint.route('/<int:page>')
+def home(page=1):
+    movies = Movie.query.all() # .paginate(page,
+                                                     #              current_app.config.get('POSTS_PER_PAGE', 10),
+                                                      #             False)
+    # recent, top_tags = sidebar_data()
 
-#     return render_template(
-#         'home.html',
-#         posts=posts,
-#         recent=recent,
-#         top_tags=top_tags
-#     )
+    return render_template(
+        'home.html',
+        movies=movies
+    )
 
 
-# @media_blueprint.route('/new', methods=['GET', 'POST'])
-# def new_post():
-#     form = PostForm()
-#     if form.validate_on_submit():
-#         new_post = Post()
-#         new_post.title = form.title.data
-#         new_post.user_id = current_user.id
-#         new_post.text = form.text.data
-#         db.session.add(new_post)
-#         db.session.commit()
-#         flash('Post added', 'info')
-#         return redirect(url_for('.post', post_id=new_post.id))
-#     return render_template('new.html', form=form)
+@media_blueprint.route('/new', methods=['GET', 'POST'])
+def new_entry():
+    form = PostForm()
+    if form.validate_on_submit():
+        new_entry = Movie()
+        new_entry.title = form.title.data
+        #new_entry.director = form.text.data
+        strange_val = form.text.data
+        db.session.add(new_entry)
+        db.session.commit()
+        flash('Entry added', 'info')
+        #return redirect(url_for('.post', post_id=new_post.id))
+    return render_template('new.html', form=form)
 
 
 # @media_blueprint.route('/edit/<int:id>', methods=['GET', 'POST'])
