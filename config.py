@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv(verbose=True)
 
 # Access the environment variables using os.environ
 # api_key = os.environ.get("API_KEY")
