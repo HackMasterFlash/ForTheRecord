@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, url_for, render_template, request
+from .omdb_access import querry_omdb_api
 
 main_blueprint = Blueprint(
     'main',
@@ -20,10 +21,11 @@ def home():
             # Call OMDB API with the selected search type
             # Example: Call the API with the title and search type
             # response = call_omdb_api(media_title, search_type)
+            response = querry_omdb_api(media_title)
             # Process the response and render the results
             # return render_template('results.html', results=response)
             # For now, just return a placeholder response
-            return render_template('results.html', results="Placeholder response")
+            return render_template('home.html', results="Placeholder response")
         else:
             # Look up this title in the local database using SQLAlchemy
             # Example: Call the database query with the title
@@ -31,11 +33,8 @@ def home():
             # Process the response and render the results
             # return render_template('results.html', results=response)
             # For now, just return a placeholder response
-            return render_template('results.html', results="Placeholder response")
-        # If no search type is selected, return an error message or redirect
-        return redirect(url_for('.home'))
-        # return "Error: No search type selected"
-    
+            return render_template('home.html', results="Placeholder response")
+        # If no search type is selected, return an error message or redirect    
     else:
         # Handle GET request
         return render_template('home.html')    
