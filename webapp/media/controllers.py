@@ -1,9 +1,9 @@
 import datetime
 from sqlalchemy import desc, func
 from flask import render_template, Blueprint, flash, redirect, url_for, current_app, abort
-from .models import db, Actor, Movie, Director
+from .models import db, Actor, Movie
 
-from .forms import CommentForm, MovieForm
+from .forms import MovieForm
 
 media_blueprint = Blueprint(
     'media',
@@ -53,8 +53,8 @@ def package_cast(data):
     actor_list = raw_cast.split(",")
     actors = []
     for str_actor in actor_list:
-        name = str_actor.split(' ')
-        actor = Actor(first_name=name[0], last_name=name[1])
+        actor = Actor()
+        actor.define_from_actor_fullname(str_actor)
         actors.append(actor)
     return actors
 
