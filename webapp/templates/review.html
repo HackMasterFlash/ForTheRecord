@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% import 'macros.html' as macros %}
+{% block title %}For The Record{% endblock %}
+{% block leftbody %}
+
+<div class="card ">
+    <div class="row g-0">
+        <div class="col-sm-3">
+            <img src="{{movie.PosterUrl}}" class="img-fluid rounded-start" alt="[Movie Poster]" style="width: 250px; height: auto; margin: 0 auto;">
+        </div>            
+        <div class="col-sm-9">            
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">                        
+                        <div class="input-group">
+                            <span class="input-group-text">Title</span>
+                            <input class="form-control" name="Title" aria-label="A Title" id="TitleEntry" type="text" value="{{movie.title}}">                
+                        </div> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col"> 
+                        <div class="input-group">
+                            <span class="input-group-text">Director</span>
+                            <input class="form-control" name="Director" aria-label="A Director" id="Director" type="text" value="{{movie.director}}">                
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">  
+                        <div class="input-group">
+                            <span class="input-group-text">Cast</span>
+                            <input class="form-control" name="Title" aria-label="A Title" id="actors" type="text" value="{{movie.actors}}">                
+                        </div>
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <span class="input-group-text">Year</span>
+                            <input class="form-control" name="Year" aria-label="A Year" id="formYearEntry" type="text" value="{{movie.year}}">                
+                        </div> 
+                    </div>
+                    <div>
+                        <div class="input-group">
+                            <span class="input-group-text">{{movie.RatingSource}}</span>
+                            <input class="form-control" name="Rating" aria-label="A Rating" id="formRatingEntry" type="text" value="{{movie.RatingValueString}}">                
+                        </div>
+                    </div>
+                </div> 
+                <h5 class="card-title">Plot Synopsis</h5>
+                <p class="card-text">{{movie.plot}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% block rightbody %}
+{% endblock %}
+
+{% endblock %}
