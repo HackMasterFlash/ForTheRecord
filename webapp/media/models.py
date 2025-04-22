@@ -8,6 +8,13 @@ movie_actor_association = db.Table(
     db.Column('actor_id', db.Integer, db.ForeignKey('actors.id'), primary_key=True)
 )
 
+# Define the association table for the many-to-many relationship between Movie and Director
+movie_writer_association = db.Table(
+    'movie_writer', db.metadata,
+    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'), primary_key=True),
+    db.Column('writer_id', db.Integer, db.ForeignKey('writers.id'), primary_key=True)
+)
+
 # Define the Movie model
 class Movie(db.Model):
     __tablename__ = 'movies'
@@ -16,6 +23,7 @@ class Movie(db.Model):
     title = db.Column(db.String, index=True, nullable=False)
     director = db.relationship("Director", back_populates="movies")
     director_id = db.Column(db.Integer, db.ForeignKey('directors.id'))
+    writers = db.relationship("Writer", secondary=movie_writer_association, back_populates="movies")
     actors = db.relationship("Actor", secondary=movie_actor_association, back_populates="movies")
     year = db.Column(db.Integer)
     IsMovie = db.Column(db.Boolean)
@@ -44,6 +52,15 @@ class Movie(db.Model):
                 result = "{0}, {1} {2}".format(result, actor.first_name, actor.last_name)
         return result
     
+    def writers_to_string(self):
+        result = ""
+        for i, writer in enumerate(self.writers):
+            if i == 0:
+                result = "{0} {1}".format(writer.first_name,writer.last_name)
+            else:
+                result = "{0}, {1} {2}".format(result, writer.first_name, writer.last_name)
+        return result
+    
     def omdb_factory(self, omdb_data):
         """
         Populate the movie object fields with data from the OMDB API response.
@@ -54,20 +71,21 @@ class Movie(db.Model):
         self.title = omdb_data.get('Title')
         director_name = omdb_data.get('Director')
         if director_name:
-            director_name = director_name.split(' ')
-            if len(director_name) > 1:
-                self.director = Director(first_name=' '.join(director_name[:-1]), last_name=director_name[-1])           
-            else:
-                self.director = Director(last_name=director_name[0])
+            self.director = Director.DirectorFactory(director_name)
         else:
             self.director = None        
         actors_str = omdb_data.get('Actors')
         actors_array = []
         for each_actor in actors_str.split(','):
-            an_actor = Actor()
-            an_actor.define_from_actor_fullname(each_actor)
+            an_actor = Actor.ActorFactory(each_actor)
             actors_array.append(an_actor)
         self.actors = actors_array
+        writers_str = omdb_data.get('Writer')
+        writers_array = []
+        for each_writer in writers_str.split(','):
+            a_writer = Writer.WriterFactory(each_writer)
+            writers_array.append(a_writer)
+        self.writers = writers_array
         self.year = omdb_data.get('Year')
         self.IsMovie = (omdb_data.get('Type') == 'movie')
         self.plot = omdb_data.get('Plot')
@@ -92,44 +110,87 @@ class Movie(db.Model):
         else:
             self.RatingSource = None
             self.RatingValueString = None
-
-    # def actor_factory_from_actor_fullname(self, actor_fullname):
-    #     actor_name = actor_fullname.split(' ')
-    #     if len(actor_name) > 2:
-    #         actor_name = Actor(first_name=' '.join(actor_name[:-1]), last_name=actor_name[-1])
-    #     elif len(actor_name) == 2:
-    #         actor_name = Actor(first_name=actor_name[0], last_name=actor_name[1])
-    #     else:
-    #         an_actor = Actor( last_name=actor_fullname)
-    #     return an_actor
     
 
+# Define a base person class to stay dry
+class Person():
+    @classmethod
+    def define_from_fullname(cls, fullname_str):
+        last_name = ""
+        first_name = ""
+        full_name = fullname_str.split(' ')
+        if len(full_name) > 1:
+            last_name=full_name[-1]
+            if cls.is_an_add_on_title(last_name):
+                last_name=' '.join(full_name[-2:])
+                first_name=' '.join(full_name[:-2])
+            else:            
+                first_name=' '.join(full_name[:-1])
+        else:
+            last_name=fullname_str
+        return [first_name, last_name]
+
+    @staticmethod
+    def is_an_add_on_title(last_name):
+        is_add_on = False
+        add_ons = ["Jr", "Junior", "Sr", "Senior"]
+        for add_on in add_ons:
+            if add_on in last_name:
+                is_add_on = True
+        return is_add_on
+
 # Define the Actor model
-class Actor(db.Model):
+class Actor(db.Model, Person):
     __tablename__ = 'actors'
 
     id = db.Column(db.Integer, primary_key=True, index=True)
     first_name = db.Column(db.String)
-    last_name = db.Column(db.String, index=True)
+    last_name = db.Column(db.String, index=True) 
     movies = db.relationship("Movie", secondary=movie_actor_association, back_populates="actors")
 
     def __repr__(self):
         return f"{self.first_name} {self.last_name}"
     
-    def define_from_actor_fullname(self, actor_fullname):
-        actor_name = actor_fullname.split(' ')
-        if len(actor_name) > 2:
-            self.first_name=' '.join(actor_name[:-1])
-            self.last_name=actor_name[-1]
-        elif len(actor_name) == 2:
-            self.first_name=actor_name[0]
-            self.last_name=actor_name[1]
-        else:
-            self.last_name=actor_fullname
+    @staticmethod
+    def ActorFactory( full_name_str):
+        an_Actor = Actor()
+        [first, last] = Actor.define_from_fullname(full_name_str)
+        an_Actor.first_name = first
+        an_Actor.last_name = last
+        return an_Actor
         
+        
+# Define the Actor model
+class Writer(db.Model, Person):
+    __tablename__ = 'writers'
+
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String, index=True)
+    movies = db.relationship("Movie", secondary=movie_writer_association, back_populates="writers")
+
+    def __repr__(self):
+        return f"{self.first_name} {self.last_name}"
     
+    @staticmethod
+    def WriterFactory( full_name_str):
+        a_writer = Writer()
+        [first, last] = Writer.define_from_fullname(full_name_str)
+        a_writer.first_name = first
+        a_writer.last_name = last
+        return a_writer
+    
+    # def define_from_fullname(self, fullname):
+    #     writer_name = fullname.split(' ')
+    #     if len(writer_name) > 1:
+    #         self.first_name=' '.join(writer_name[:-1])
+    #         self.last_name=writer_name[-1]
+    #     else:
+    #         self.last_name=writer_name
+
+
 # Define the Director model
-class Director(db.Model):
+class Director(db.Model, Person):
     __tablename__ = 'directors'
 
     id = db.Column(db.Integer, primary_key=True, index=True)
@@ -139,3 +200,11 @@ class Director(db.Model):
 
     def __repr__(self):
         return f"{self.first_name} {self.last_name}"
+
+    @staticmethod
+    def DirectorFactory( full_name_str):
+        a_director = Director()
+        [first, last] = Director.define_from_fullname(full_name_str)
+        a_director.first_name = first
+        a_director.last_name = last
+        return a_director
