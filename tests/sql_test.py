@@ -88,6 +88,13 @@ try:
             db_local.add(an_Actor)
             something_to_commit = True
 
+    try:
+        db_local.add(actor3)
+        db_local.commit()
+    except Exception as e:
+        print(f"Error adding actor3: {e}")
+        db_local.rollback()
+
     if something_to_commit:
         db_local.commit()
         something_to_commit = False
