@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-def get_jaws_movie_data():
+def get_movie_data(title):
     """
     Queries the OMDb API for information about the movie "Jaws".
 
@@ -20,7 +20,7 @@ def get_jaws_movie_data():
 
     base_url = "http://www.omdbapi.com/"
     params = {
-        "t": "Apollo 13",  # 't' parameter for movie title
+        "t": title,  # 't' parameter for movie title
         "apikey": api_key,
         "type": "movie"  # Explicitly specify we are looking for a movie
     }
@@ -38,7 +38,8 @@ def get_jaws_movie_data():
         return None
 
 if __name__ == "__main__":
-    jaws_data = get_jaws_movie_data()
+    title = "Apollo 13"
+    jaws_data = get_movie_data(title)
     if jaws_data:
         if jaws_data.get("Response") == "True":
             print("Movie data for 'Jaws':")
