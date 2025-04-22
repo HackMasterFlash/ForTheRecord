@@ -100,12 +100,16 @@ class Movie(db.Model):
                 if rating.get('Source') == 'Rotten Tomatoes':
                     self.RatingSource = 'Rotten Tomatoes'
                     self.RatingValueString = rating.get('Value')
+                    if '%' in self.RatingValueString:
+                        self.RatingValue = float(self.RatingValueString.replace('%','')) / 100
                     break
             if self.RatingSource is None:
                 for rating in the_ratings:
                     if rating.get('Source') == 'Internet Movie Database':
                         self.RatingSource = 'Internet Movie Database'
                         self.RatingValueString = rating.get('Value')
+                        if '/' in self.RatingValueString:
+                            self.RatingValue = float(self.RatingValueString.split('/')[0]) / float(self.RatingValueString.split('/')[1])
                         break
         else:
             self.RatingSource = None
@@ -142,7 +146,8 @@ class Person():
 # Define the Actor model
 class Actor(db.Model, Person):
     __tablename__ = 'actors'
-
+    __table_args__ = (db.UniqueConstraint('first_name', 'last_name', name='unique_actor'),)
+    
     id = db.Column(db.Integer, primary_key=True, index=True)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String, index=True) 
@@ -163,7 +168,8 @@ class Actor(db.Model, Person):
 # Define the Actor model
 class Writer(db.Model, Person):
     __tablename__ = 'writers'
-
+    __table_args__ = (db.UniqueConstraint('first_name', 'last_name', name='unique_actor'),)
+    
     id = db.Column(db.Integer, primary_key=True, index=True)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String, index=True)
@@ -179,20 +185,13 @@ class Writer(db.Model, Person):
         a_writer.first_name = first
         a_writer.last_name = last
         return a_writer
-    
-    # def define_from_fullname(self, fullname):
-    #     writer_name = fullname.split(' ')
-    #     if len(writer_name) > 1:
-    #         self.first_name=' '.join(writer_name[:-1])
-    #         self.last_name=writer_name[-1]
-    #     else:
-    #         self.last_name=writer_name
 
 
 # Define the Director model
 class Director(db.Model, Person):
     __tablename__ = 'directors'
-
+    __table_args__ = (db.UniqueConstraint('first_name', 'last_name', name='unique_actor'),)
+    
     id = db.Column(db.Integer, primary_key=True, index=True)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String, index=True)
