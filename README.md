@@ -34,6 +34,12 @@ load_detenv()
 DEBUG = os.environ.get("DEBUG")
 API_KEY = os.environ.get("API_KEY")
 
+#####
+To use google's Gemini AI install this package
+uv pip install google-generativeai
+
+####
+
 OMDB Fields I want to ingest:
 Title: Apollo 13
 Year: 1995
