@@ -109,7 +109,7 @@ class Movie(db.Model):
             if self.RatingSource is None:
                 for rating in the_ratings:
                     if rating.get('Source') == 'Internet Movie Database':
-                        self.RatingSource = 'Internet Movie Database'
+                        self.RatingSource = 'IMDb'
                         self.RatingValueString = rating.get('Value')
                         if '/' in self.RatingValueString:
                             self.RatingValue = float(self.RatingValueString.split('/')[0]) / float(self.RatingValueString.split('/')[1])
@@ -129,10 +129,10 @@ class Person():
         if len(full_name) > 1:
             last_name=full_name[-1]
             if cls.is_an_add_on_title(last_name):
-                last_name=' '.join(full_name[-2:])
-                first_name=' '.join(full_name[:-2])
+                last_name=' '.join(full_name[-2:]).strip()
+                first_name=' '.join(full_name[:-2]).strip()
             else:            
-                first_name=' '.join(full_name[:-1])
+                first_name=' '.join(full_name[:-1]).strip()
         else:
             last_name=fullname_str
         return [first_name, last_name]
