@@ -1,7 +1,7 @@
-from flask import Blueprint, redirect, url_for, render_template, request
+from flask import Blueprint, redirect, url_for, render_template, request, flash
 from .omdb_access import querry_omdb_api
 from ..media.forms import MovieForm
-from ..media.models import Movie, Actor
+from ..media.models import Movie, Actor, Writer
 from .. import db
 
 main_blueprint = Blueprint(
@@ -64,6 +64,9 @@ def review():
                 a_movie.omdb_factory(response)
                 movieForm = MovieForm()
                 return render_template('review.html', form=movieForm, movie=a_movie)
+            else:
+                # figure out how to send flash messages
+                flash("Error: {0}".format(response.get('Error')))
             return render_template('home.html', results="Placeholder response")
     if form.validate_on_submit():
         # Handle form submission
@@ -71,6 +74,11 @@ def review():
         title = form.title.data
         director = form.director.data
         actors = form.actors.data.split(',')
+        writers = form.writers.data
+        multiple_writers = False
+        if ',' in writers:
+            writers = writers.split(',')
+            only_one_writer = True
         year = form.year.data
         plot = form.plot.data
         poster_url = form.poster_url.data
@@ -90,12 +98,38 @@ def review():
         
         # Add actors to the movie object and save to the database
         for actor_name in actors:            
-            actor = Actor()
-            actor.define_from_actor_fullname(actor_name)            
+            actor = Actor().ActorFactory(actor_name)
+            inTable = db.session.query(Actor).filter(
+                Actor.first_name == actor.first_name,
+                Actor.last_name == actor.last_name).first()
+            if not inTable:
+                db.session.add(actor)
+                db.session.commit()           
             new_movie.actors.append(actor)
 
-        db.session.add(new_movie)
-        db.session.commit()
+        if multiple_writers:
+            for writer_name in writers:
+                writer = Writer().WriterFactory(writer_name)
+                inTable = db.session.query(Writer).filter(
+                    Writer.first_name == writer.first_name,
+                    Writer.last_name == writer.last_name).first()
+            if not inTable:
+                db.session.add(writer)
+                db.session.commit()
+            new_movie.writers.append(writer)
+        else:
+            writer = Writer().WriterFactory(writers)
+            inTable = db.session.query(Writer).filter(
+                Writer.first_name == writer.first_name,
+                Writer.last_name == writer.last_name).first()
+            if not inTable:
+                db.session.add(writer)
+                db.session.commit()
+            new_movie.writers.append(writer)
+
+
+        # db.session.add(new_movie)
+        # db.session.commit()
 
         return render_template('review.html', form=form, movie=new_movie)
     # If the form is not submitted, render the review page with the form
