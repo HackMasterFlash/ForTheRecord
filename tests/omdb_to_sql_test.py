@@ -53,7 +53,7 @@ session = db.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 db_local = session()
 
 # Ask for OMDB data
-title = "The Pink Panther"
+title = "Jaws"
 omdb_data = get_movie_data(title)
 if omdb_data:
     if omdb_data.get("Response") == "True":
@@ -85,7 +85,8 @@ print("\nMovies and their Actors:")
 movies = db_local.query(Movie).all()
 for movie in movies:
     actor_names = [f"{actor.first_name} {actor.last_name}" for actor in movie.actors]
-    print(f"Title: {movie.title}, Director: {movie.director}, Actors: {', '.join(actor_names)}")
+    print(f"Title: {movie.title}, Director: {movie.director}, \n\tActors: {', '.join(actor_names)}")
+    print(f"\tRating: {movie.RatingValue}, From: {movie.RatingSource}, Year: {movie.year}")
 
 # Query actors and the movies they starred in
 print("\nActors and their Movies:")
