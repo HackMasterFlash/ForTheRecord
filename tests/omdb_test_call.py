@@ -22,7 +22,7 @@ def get_movie_data(title):
     params = {
         "t": title,  # 't' parameter for movie title
         "apikey": api_key,
-        "type": "movie"  # Explicitly specify we are looking for a movie
+        "type": "series"  # Explicitly specify we are looking for a movie
     }
 
     try:
@@ -38,11 +38,11 @@ def get_movie_data(title):
         return None
 
 if __name__ == "__main__":
-    title = "Apollo 13"
+    title = "Severence"
     jaws_data = get_movie_data(title)
     if jaws_data:
         if jaws_data.get("Response") == "True":
-            print("Movie data for 'Jaws':")
+            print("Movie data for '{0}':".format(title))
             for key, value in jaws_data.items():
                 print(f"{key}: {value}")
         else:
