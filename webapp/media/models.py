@@ -54,11 +54,14 @@ class Movie(db.Model):
     
     def writers_to_string(self):
         result = ""
-        for i, writer in enumerate(self.writers):
-            if i == 0:
-                result = "{0} {1}".format(writer.first_name,writer.last_name)
-            else:
-                result = "{0}, {1} {2}".format(result, writer.first_name, writer.last_name)
+        if len(self.writers) == 1:
+            result = "{0} {1}".format(self.writers[0].first_name,self.writers[0].last_name)
+        else:
+            for i, writer in enumerate(self.writers):
+                if i == 0:
+                    result = "{0} {1}".format(writer.first_name,writer.last_name)
+                else:
+                    result = "{0}, {1} {2}".format(result, writer.first_name, writer.last_name)
         return result
     
     def omdb_factory(self, omdb_data):
