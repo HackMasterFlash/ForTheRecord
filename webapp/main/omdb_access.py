@@ -28,7 +28,7 @@ def querry_omdb_api(title):
     params = {
         "t": title,  # 't' parameter for movie title
         "apikey": api_key,
-        "type": "movie"  # Explicitly specify we are looking for a movie
+        "type": "series"  # Explicitly specify we are looking for a movie
     }
 
     try:
