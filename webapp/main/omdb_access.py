@@ -11,7 +11,7 @@ from flask import current_app
 # get the API key from the environment variables
 # OMDB_API_KEY = os.getenv('OMDB_API_KEY')
 
-def querry_omdb_api(title):
+def querry_omdb_api(title, type="movie", year=None):
     """
     Queries the OMDb API for information about a movie.
 
@@ -28,8 +28,11 @@ def querry_omdb_api(title):
     params = {
         "t": title,  # 't' parameter for movie title
         "apikey": api_key,
-        "type": "series"  # Explicitly specify we are looking for a movie
+        "type": type  # Explicitly specify we are looking for a movie
     }
+
+    if year:
+        params["year"] = year
 
     try:
         response = requests.get(base_url, params=params)
