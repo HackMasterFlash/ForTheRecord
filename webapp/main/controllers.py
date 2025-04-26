@@ -24,7 +24,12 @@ def home():
             # Call OMDB API with the selected search type
             # Example: Call the API with the title and search type
             # response = call_omdb_api(media_title, search_type)
-            response = querry_omdb_api(media_title)
+            media_type = form_data.get('radioOmdbType')
+            year = form_data.get('Year')
+            if len(year) > 0:
+                response = querry_omdb_api(media_title, type=media_type, year=year)
+            else:
+                response = querry_omdb_api(media_title, type=media_type)
             # Check if the response is valid
             if response.get('Response') == 'True':
                 a_movie = Movie()
