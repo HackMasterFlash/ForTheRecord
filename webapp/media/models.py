@@ -73,6 +73,8 @@ class Movie(db.Model):
         """
         self.title = omdb_data.get('Title')
         director_name = omdb_data.get('Director')
+        if "N/A" in director_name:
+            director_name = None
         if director_name:
             self.director = Director.DirectorFactory(director_name)
         else:
@@ -92,7 +94,7 @@ class Movie(db.Model):
         self.year = omdb_data.get('Year')
         self.IsMovie = (omdb_data.get('Type') == 'movie')
         self.plot = omdb_data.get('Plot')
-        self.PosterUrl = omdb_data.get('Poster')
+        self.PosterURL = omdb_data.get('Poster')
         the_ratings = omdb_data.get('Ratings')
         self.RatingSource = None
         # Check to see if there is a Rotten Tomatoes rating in the list of ratings
