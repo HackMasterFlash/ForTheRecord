@@ -1,5 +1,6 @@
 from flask import Blueprint, redirect, url_for, render_template, flash, request, session
 import json
+from datetime import datetime
 from .omdb_access import querry_omdb_api
 from ..media.forms import MovieForm
 from ..media.models import Movie, Actor, Writer
@@ -34,7 +35,13 @@ def home():
             # Check if the response is valid
             if response.get('Response') == 'True':
                 a_movie = Movie()
-                a_movie.omdb_factory(response)     
+                a_movie.omdb_factory(response)    
+
+                # Check if the movie is already in the local database
+                inTable = db.session.query(Movie).filter(Movie.title == a_movie.title).first() 
+                if inTable:
+                    flash('{0} already in table'.format(a_movie.title))
+                    a_movie = inTable
                 session['omdb_result'] = json.dumps(response)                          
                 return render_template('review.html', movie=a_movie)
             else:
@@ -77,10 +84,10 @@ def review():
             return render_template('home.html')
             
         new_movie.PersonalRating = int(form_data.get('PersonalRating'))
-        new_movie.DateViewed = form_data.get('DateViewed')  
+        new_movie.DateViewed = datetime.strptime(form_data.get('DateViewed'), '%Y-%m-%d')
 
         # Check if the movie is already in the local database
-        inTable = db.query(Movie).filter(Movie.title == new_movie.title).first()
+        inTable = db.session.query(Movie).filter(Movie.title == new_movie.title).first()
         if inTable:
             flash('{0} already in table'.format(new_movie.title))
         else:
