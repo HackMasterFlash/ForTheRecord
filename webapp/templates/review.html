@@ -6,7 +6,7 @@
 <div class="card ">
     <div class="row g-0">
         <div class="col-sm-3">
-            <img src="{{movie.PosterUrl}}" class="img-fluid rounded-start" alt="[Movie Poster]" style="width: 250px; height: auto; margin: 0 auto;">
+            <img src="{{movie.PosterURL}}" class="img-fluid rounded-start" alt="[Movie Poster]" style="width: 250px; height: auto; margin: 0 auto;">
         </div>            
         <div class="col-sm-9">            
             <div class="card-body">
@@ -68,7 +68,7 @@
                         <div class="col-sm-4">
                             <div class="input-group date" id="datepicker">
                                 <span class="input-group-text">Date Viewed</span>
-                                <input type="date" class="form-control" name="DateViewed" id="DateViewed" placeholder="YYYY-MM-DD" aria-label="A Date Viewed">
+                                <input type="date" class="form-control" name="DateViewed" id="DateViewed" aria-label="A Date Viewed" value="{{movie.DateViewed.strftime('%Y-%m-%d')if movie.DateViewed else '2000-11-28'}}">
                             </div>
                         </div>
                     </div> 
