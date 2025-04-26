@@ -36,6 +36,9 @@ def home():
                 a_movie.omdb_factory(response)
                 movieForm = MovieForm()                
                 return render_template('review.html', form=movieForm, movie=a_movie)
+            else:
+                # figure out how to send flash messages
+                flash("Error: When searching for {0} OMDB returned {1}".format(media_title, response.get('Error')))
             return render_template('home.html', results="Placeholder response")
         else:
             # Look up this title in the local database using SQLAlchemy
