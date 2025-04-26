@@ -1,4 +1,5 @@
-from flask import Blueprint, redirect, url_for, render_template, request, flash
+from flask import Blueprint, redirect, url_for, render_template, flash, request, session
+import json
 from .omdb_access import querry_omdb_api
 from ..media.forms import MovieForm
 from ..media.models import Movie, Actor, Writer
@@ -33,9 +34,9 @@ def home():
             # Check if the response is valid
             if response.get('Response') == 'True':
                 a_movie = Movie()
-                a_movie.omdb_factory(response)
-                movieForm = MovieForm()                
-                return render_template('review.html', form=movieForm, movie=a_movie)
+                a_movie.omdb_factory(response)     
+                session['omdb_result'] = json.dumps(response)                          
+                return render_template('review.html', movie=a_movie)
             else:
                 # figure out how to send flash messages
                 flash("Error: When searching for {0} OMDB returned {1}".format(media_title, response.get('Error')))
@@ -56,89 +57,40 @@ def home():
 @main_blueprint.route('/review', methods=['GET', 'POST'])
 def review():
     """The review page of the web app."""
-    form = MovieForm()
+    
     if request.method == 'POST':
         # Handle POST request
         # Access form data
         form_data = request.form
         media_title = form_data.get('Title')
-        search_type = form_data.get('radioSearchSelect')
-        if search_type.strip() == 'OMDB':
-            # Call OMDB API with the selected search type
-            response = querry_omdb_api(media_title)
-            # Check if the response is valid
-            if response.get('Response') == 'True':
-                a_movie = Movie()
-                a_movie.omdb_factory(response)
-                movieForm = MovieForm()
-                return render_template('review.html', form=movieForm, movie=a_movie)
-            else:
-                # figure out how to send flash messages
-                flash("Error: {0}".format(response.get('Error')))
-            return render_template('home.html', results="Placeholder response")
-    if form.validate_on_submit():
-        # Handle form submission
-        # Access form data
-        title = form.title.data
-        director = form.director.data
-        actors = form.actors.data.split(',')
-        writers = form.writers.data
-        multiple_writers = False
-        if ',' in writers:
-            writers = writers.split(',')
-            only_one_writer = True
-        year = form.year.data
-        plot = form.plot.data
-        poster_url = form.poster_url.data
-        rating_source = form.rating_source.data
-        rating = form.rating.data
 
-        # Create a new movie object and save it to the database
-        new_movie = Movie(
-            title=title,
-            director=director,
-            year=year,
-            plot=plot,
-            poster_url=poster_url,
-            rating_source=rating_source,
-            rating=rating
-        )
-        
-        # Add actors to the movie object and save to the database
-        for actor_name in actors:            
-            actor = Actor().ActorFactory(actor_name)
-            inTable = db.session.query(Actor).filter(
-                Actor.first_name == actor.first_name,
-                Actor.last_name == actor.last_name).first()
-            if not inTable:
-                db.session.add(actor)
-                db.session.commit()           
-            new_movie.actors.append(actor)
+        omdb_result = json.loads(session.get('omdb_result', '{}'))
+        # new_movie = session.get('movie', None)
+        new_movie = Movie()
+        new_movie.omdb_factory(omdb_result)
+        if new_movie is None:
+            flash("Error: No movie object found in Flask session.")
+            return render_template('home.html')
 
-        if multiple_writers:
-            for writer_name in writers:
-                writer = Writer().WriterFactory(writer_name)
-                inTable = db.session.query(Writer).filter(
-                    Writer.first_name == writer.first_name,
-                    Writer.last_name == writer.last_name).first()
-            if not inTable:
-                db.session.add(writer)
-                db.session.commit()
-            new_movie.writers.append(writer)
+        if new_movie.title != media_title:
+            flash("Error: Flask stored OMDB Movie title {0} does not match review form movie title {1}.".format(new_movie.title, media_title))
+            return render_template('home.html')
+            
+        new_movie.PersonalRating = int(form_data.get('PersonalRating'))
+        new_movie.DateViewed = form_data.get('DateViewed')  
+
+        # Check if the movie is already in the local database
+        inTable = db.query(Movie).filter(Movie.title == new_movie.title).first()
+        if inTable:
+            flash('{0} already in table'.format(new_movie.title))
         else:
-            writer = Writer().WriterFactory(writers)
-            inTable = db.session.query(Writer).filter(
-                Writer.first_name == writer.first_name,
-                Writer.last_name == writer.last_name).first()
-            if not inTable:
-                db.session.add(writer)
-                db.session.commit()
-            new_movie.writers.append(writer)
+            db.session.add(new_movie)
+            db.session.commit()
+            flash("Success: Entered {0} into local Db".format(media_title))
 
-
-        # db.session.add(new_movie)
-        # db.session.commit()
-
-        return render_template('review.html', form=form, movie=new_movie)
+        session['movie'] = None        
+        return render_template('home.html')
+    
     # If the form is not submitted, render the review page with the form
-    return render_template('review.html', form=form)    
+    return render_template('review.html')
+        
