@@ -101,3 +101,84 @@ def review():
     # If the form is not submitted, render the review page with the form
     return render_template('review.html')
         
+@main_blueprint.route('/listings', methods=['GET', 'POST'])
+def listings():
+    """The page lisitng contents of local db the web app."""
+    # Use SQLAlchemy to query the database and get the list of movies
+    # Take advantage of the pagination feature of Flask-SQLAlchemy
+    # Example: Get the first 10 movies
+    page_index = request.args.get('page', 1, type=int)
+    page_of_movies = db.session.query(Movie).order_by(Movie.title).paginate(page=page_index, per_page=10)
+
+    if request.method == 'POST':
+        print("POST request received")
+        # Handle POST request
+        return render_template('home.html')
+
+    return render_template('db_listing.html', movies=page_of_movies)
+
+@main_blueprint.route('/movie/<int:movie_id>', methods=['GET'])
+def movie_detail(movie_id):
+    """The page showing details of a movie."""
+    # Use SQLAlchemy to query the database and get the movie details
+    movie = db.session.query(Movie).get(movie_id)
+    if not movie:
+        flash("Error: Movie with ID {0} not found.".format(movie_id))
+        return redirect(url_for('main.listings'))
+
+    return render_template('movie_detail.html', movie=movie)
+
+@main_blueprint.route('/movie/<int:movie_id>/delete', methods=['POST'])
+def delete_movie(movie_id):
+    """Delete a movie from the database."""
+    # Use SQLAlchemy to query the database and delete the movie
+    movie = db.session.query(Movie).get(movie_id)
+    if not movie:
+        flash("Error: Movie with ID {0} not found.".format(movie_id))
+        return render_template('home.html')
+
+    # Add bootstrap modal confirmation
+    # if request.method == 'POST':
+    #     # Handle POST request
+
+    db.session.delete(movie)
+    db.session.commit()
+    flash("Success: Deleted movie with ID {0}".format(movie_id))
+    return render_template('home.html')
+
+@main_blueprint.route('/movie/<int:movie_id>/edit', methods=['GET', 'POST'])
+def edit_movie(movie_id):
+    """Edit a movie in the database."""
+    # Use SQLAlchemy to query the database and get the movie details
+
+    if request.method == 'GET':
+            movie = db.session.query(Movie).get(movie_id)
+            if not movie:
+                flash("Error: Movie with ID {0} not found.".format(movie_id))
+                return render_template('home.html')
+            # Render the edit form with the movie details
+            return render_template('edit_movie.html', movie=movie)
+    else:
+        # Handle POST request
+        # Access form data
+        form_data = request.form
+        media_title = form_data.get('Title')
+        Movie.query.filter_by(id=movie_id).first().uodate(
+            title='New Title',
+            year=2023,
+            rating=8.5,
+            genre='Action',
+            director='New Director',
+            writer='New Writer',
+            actors='New Actors',
+            plot='New Plot',
+            poster='New Poster URL'
+        )
+        db.session.commit()
+        flash("Success: Updated movie with ID {0}".format(movie_id))
+        return render_template('home.html')
+
+
+    
+
+    
