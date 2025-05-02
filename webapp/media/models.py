@@ -120,6 +120,45 @@ class Movie(db.Model):
             self.RatingSource = None
             self.RatingValueString = None
     
+    def UpdateUsing(self, other_movie):
+        """
+        Update the movie object fields with data from another version of this movie class.
+
+        Args:
+            other_movie (object): another movie class instance.
+        """
+        if self.title not in other_movie.title:
+            raise ValueError("The title of the movie does not match the title of the other movie.")            
+
+        if self.director == None:
+            self.director = other_movie.director
+        if self.writers == None:
+            self.writers = other_movie.writers
+        if self.actors == None:
+            self.actors = other_movie.actors
+        if self.year == None:
+            self.year = other_movie.year
+        if self.IsMovie == None:
+            self.IsMovie = other_movie.IsMovie
+        if self.plot == None:
+            self.plot = other_movie.plot
+        if self.PosterURL == None:
+            self.PosterURL = other_movie.PosterURL
+        if self.RatingSource == None:
+            self.RatingSource = other_movie.RatingSource
+        if self.RatingValue == None:
+            self.RatingValue = other_movie.RatingValue
+        if self.RatingValueString == None:
+            self.RatingValueString = other_movie.RatingValueString
+        if self.PosterLocalURL == None:
+            self.PosterLocalURL = other_movie.PosterLocalURL
+        if self.DateViewed == None:
+            self.DateViewed = other_movie.DateViewed
+        if self.PersonalRating == None:
+            self.PersonalRating = other_movie.PersonalRating
+        if self.Source == None:
+            self.Source = other_movie.Source
+        
 
 # Define a base person class to stay dry
 class Person():
