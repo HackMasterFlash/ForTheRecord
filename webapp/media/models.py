@@ -77,18 +77,38 @@ class Movie(db.Model):
             director_name = None
         if director_name:
             self.director = Director.DirectorFactory(director_name)
+            # Check if the director is already in the database
+            inTable = db.session.query(Director).filter(Director.first_name == self.director.first_name, Director.last_name == self.director.last_name).first()
+            if inTable:
+                self.director = inTable
+            # else:  # Don't think I want to do this because then it will fail the unique constraint
+            #     # Add the new director to the database
+            #     db.session.add(self.director)
+            #     db.session.commit()
         else:
             self.director = None        
         actors_str = omdb_data.get('Actors')
         actors_array = []
         for each_actor in actors_str.split(','):
             an_actor = Actor.ActorFactory(each_actor)
+            # Check if the actor is already in the database
+            inTable = db.session.query(Actor).filter(Actor.first_name == an_actor.first_name, Actor.last_name == an_actor.last_name).first()
+            if inTable:
+                an_actor = inTable
+            # else:
+            #     # Add the new actor to the database
+            #     db.session.add(an_actor)
+            #     db.session.commit()
             actors_array.append(an_actor)
         self.actors = actors_array
         writers_str = omdb_data.get('Writer')
         writers_array = []
         for each_writer in writers_str.split(','):
             a_writer = Writer.WriterFactory(each_writer)
+            # Check if the writer is already in the database
+            inTable = db.session.query(Writer).filter(Writer.first_name == a_writer.first_name, Writer.last_name == a_writer.last_name).first()
+            if inTable:
+                a_writer = inTable
             writers_array.append(a_writer)
         self.writers = writers_array
         self.year = omdb_data.get('Year')
