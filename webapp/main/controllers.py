@@ -41,21 +41,21 @@ def home():
                 inTable = db.session.query(Movie).filter(Movie.title == a_movie.title).first() 
                 if inTable:
                     flash('{0} already in table'.format(a_movie.title))
-                    a_movie = inTable
+                    # a_movie = inTable
                 session['omdb_result'] = json.dumps(response)                          
                 return render_template('review.html', movie=a_movie)
             else:
                 # figure out how to send flash messages
-                flash("Error: When searching for {0} OMDB returned {1}".format(media_title, response.get('Error')))
+                flash("Error: When searching for {0}, OMDB returned {1}".format(media_title, response.get('Error')))
             return render_template('home.html', results="Placeholder response")
         else:
             # Look up this title in the local database using SQLAlchemy
-            # Example: Call the database query with the title
-            # response = query_local_database(media_title)
-            # Process the response and render the results
-            # return render_template('results.html', results=response)
-            # For now, just return a placeholder response
-            return render_template('home.html', results="Placeholder response")
+            inTable = db.session.query(Movie).filter(Movie.title == media_title).first() 
+            if inTable:
+                return redirect(url_for('main.movie_detail', movie_id=inTable.id))                
+            else:
+                flash("Sorry! {0} not found in local database.".format(media_title))
+            return render_template('home.html')
         # If no search type is selected, return an error message or redirect    
     else:
         # Handle GET request
@@ -90,6 +90,8 @@ def review():
         inTable = db.session.query(Movie).filter(Movie.title == new_movie.title).first()
         if inTable:
             flash('{0} already in table'.format(new_movie.title))
+            inTable.UpdateUsing(new_movie)
+            db.session.commit()
         else:
             db.session.add(new_movie)
             db.session.commit()
@@ -115,9 +117,9 @@ def listings():
         # Handle POST request
         return render_template('home.html')
 
-    return render_template('db_listing.html', movies=page_of_movies)
+    return render_template('db_listing.html', page=page_of_movies)
 
-@main_blueprint.route('/movie/<int:movie_id>', methods=['GET'])
+@main_blueprint.route('/movie/<int:movie_id>', methods=['GET', 'POST'])
 def movie_detail(movie_id):
     """The page showing details of a movie."""
     # Use SQLAlchemy to query the database and get the movie details
@@ -125,6 +127,10 @@ def movie_detail(movie_id):
     if not movie:
         flash("Error: Movie with ID {0} not found.".format(movie_id))
         return redirect(url_for('main.listings'))
+    
+    if request.method == 'POST':
+        flash("Todo: Handle POST request for movie detail page")
+        return render_template('home.html')
 
     return render_template('movie_detail.html', movie=movie)
 
@@ -163,7 +169,7 @@ def edit_movie(movie_id):
         # Access form data
         form_data = request.form
         media_title = form_data.get('Title')
-        Movie.query.filter_by(id=movie_id).first().uodate(
+        Movie.query.filter_by(id=movie_id).first().update(
             title='New Title',
             year=2023,
             rating=8.5,
