@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import 'macros.html' as macros %}
+{% block title %}For The Record{% endblock %}
+{% block leftbody %}
+
+<div class="card mb-3" style="margin: 0 auto;">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{{movie.PosterURL}}" class="img-fluid rounded-start" alt="[Movie Poster]" style="width: 250px; height: auto; margin: 0 auto;">
+        </div>            
+        <div class="col-md-8">            
+            <div class="card-body">
+                <form method="POST" action="/review">
+                    {{ macros.render_movie_detail(movie) }}
+                    <button class="btn btn-primary" type="submit" id="button-update">Update in Local Db</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block rightbody %}
+{% endblock %}
+
+
