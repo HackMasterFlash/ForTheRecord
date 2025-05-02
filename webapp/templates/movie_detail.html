@@ -5,10 +5,10 @@
 
 <div class="card mb-3" style="margin: 0 auto;">
     <div class="row g-0">
-        <div class="col-md-4">
+        <div class="col-sm-3">
             <img src="{{movie.PosterURL}}" class="img-fluid rounded-start" alt="[Movie Poster]" style="width: 250px; height: auto; margin: 0 auto;">
         </div>            
-        <div class="col-md-8">            
+        <div class="col-sm-9">            
             <div class="card-body">
                 <form method="POST" action="/review">
                     {{ macros.render_movie_detail(movie) }}
