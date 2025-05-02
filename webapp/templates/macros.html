@@ -40,6 +40,72 @@
 {% endmacro %}
 -->
 
+{% macro render_movie_detail(movie) %}
+<div class="row">
+    <div class="col">                        
+        <div class="input-group">
+            <span class="input-group-text">Title</span>
+            <input class="form-control" name="Title" aria-label="A Title" id="TitleEntry" type="text" value="{{movie.title}}">                
+        </div> 
+    </div>
+</div>
+<div class="row">
+    <div class="col"> 
+        <div class="input-group">
+            <span class="input-group-text">Director</span>
+            <input class="form-control" name="Director" aria-label="A Director" id="Director" type="text" value="{{movie.director}}">                
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col"> 
+        <div class="input-group">
+            <span class="input-group-text">Writer</span>
+            <input class="form-control" name="Writer" aria-label="A Writer" id="Writer" type="text" value="{{movie.writers_to_string()}}">                
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">  
+        <div class="input-group">
+            <span class="input-group-text">Cast</span>
+            <input class="form-control" name="Title" aria-label="A Title" id="actors" type="text" value="{{movie.actors_to_string()}}">                
+        </div>
+    </div>
+</div>  
+<div class="row">
+    <div class="col-sm-4">
+        <div class="input-group">
+            <span class="input-group-text">Year</span>
+            <input class="form-control" name="Year" aria-label="A Year" id="year" type="text" value="{{movie.year}}">                
+        </div> 
+    </div>
+    <div class="col-sm-4">
+        <div class="input-group">
+            <span class="input-group-text">{{movie.RatingSource}}</span>
+            <input class="form-control" name="Rating" aria-label="A Rating" id="Rating" type="text" value="{{movie.RatingValueString}}">                
+        </div>
+    </div>                        
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="input-group">
+            <span class="input-group-text">Personal Rating</span>
+            <input class="form-control" name="PersonalRating" aria-label="A personalRating" id="PersonalRating" type="text" value="{{movie.PersonalRating}}">                
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="input-group date" id="datepicker">
+            <span class="input-group-text">Date Viewed</span>
+            <input type="date" class="form-control" name="DateViewed" id="DateViewed" aria-label="A Date Viewed" value="{{movie.DateViewed.strftime('%Y-%m-%d')if movie.DateViewed else '2000-11-28'}}">
+        </div>
+    </div>
+</div> 
+<br>                    
+<h5 class="card-title">Plot Synopsis</h5>
+<p class="card-text">{{movie.plot}}</p>
+{% endmacro %}
+
 {% macro render_entries(movies, pagination=True) %}
 {% if pagination %}
 {% set _movies = movies.items %}
