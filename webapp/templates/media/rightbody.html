@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col">
+        <h5>Recent Entries</h5>
+    </div>
+</div>
+{% set _movies = movies %}
+<ul class="list-group">
+    {% for movie in _movies %}
+    <li class="list-group-item">
+        <a href="{{ url_for('media.update_entry', movie_id=movie.id) }}">{{ movie.title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+<!--
+<div class="row">
+    <div class="col">
+        <h5>Popular Tags</h5>
+    </div>
+</div>
+<ul class="list-group">
+    {% for tag in top_tags %}
+    <li class="list-group-item"
+    ><a href="{{ url_for('blog.posts_by_tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+-->
+
+

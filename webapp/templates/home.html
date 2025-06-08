@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% import 'macros.html' as macros %}
+{% block title %}For The Record{% endblock %}
+{% block leftbody %}
+<div class="col-12">  
+  <div class="card ">
+    <div class="card-body">
+      <h5 class="card-title">Media Search</h5>
+      <p class="card-text">Pick whether to search OMDB or the local db then enter a movie or show title.</p>
+      <form method="POST" action="/">
+        <div class="row justify-content-md-center">  
+          <div class="col-md-10">              
+            <div class="input-group">
+              <span class="input-group-text">Title</span>
+              <input class="form-control" name="Title" aria-label="A Title" id="formTitleEntry" placeholder="Enter a title" type="text" aria-describedby="button-search">
+              <button class="btn btn-outline-primary" type="submit" id="button-search">Search</button>
+            </div>   
+          </div>
+        </div>
+        <div class="row justify-content-md-center">  
+          <div class="col-md-10">              
+            <div class="input-group">
+              <span class="input-group-text">Year</span>
+              <input class="form-control" name="Year" aria-label="A Year" id="formYearEntry" placeholder="Enter a year (optional)" type="text" aria-describedby="button-search">                
+            </div>   
+          </div>
+        </div>   
+        <p> </p>
+        <div class="row justify-content-md-center g-2" >
+          <div class="col-md-5">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">OMDB Search Options</h5>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="radioSearchSelect" id="radioOmdbSearch" value="OMDB" checked>
+                  <label class="form-check-label" for="radioOmdbSearch">OMDB Source</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="radioOmdbType" id="radioMovieType" value="movie" checked>
+                  <label class="form-check-label" for="radioLocalSearch">Movie</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="radioOmdbType" id="radioSeriesType" value="series">
+                  <label class="form-check-label" for="radioLocalSearch">TV Series</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3"></div>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Local db Search</h5>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="radioSearchSelect" id="radioLocalSearch" value="Local">
+                <label class="form-check-label" for="radioLocalSearch">Local db Search</label>
+              </div>
+            </div>
+          </div>          
+        </div>                  
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

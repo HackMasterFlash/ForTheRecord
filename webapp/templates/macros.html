@@ -1,0 +1,169 @@
+<!--
+{% macro render_pagination(pagination, endpoint) %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if pagination.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('media.home', page=pagination.prev().page) }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        {% endif %}
+        {% for page in pagination.iter_pages() %}
+        {% if page %}
+        {% if page != pagination.page %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
+        </li>
+        {% else %}
+        <li class="page-item active">
+            <a class="page-link" href="">{{ page }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="page-item">
+            <a class="page-link">…</a>
+        <li>
+            {% endif %}
+            {% endfor %}
+            {% if pagination.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('media.home', page=pagination.next().page) }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endmacro %}
+-->
+
+{% macro render_movie_detail(movie) %}
+<div class="row">
+    <div class="col">                        
+        <div class="input-group">
+            <span class="input-group-text">Title</span>
+            <input class="form-control" name="Title" aria-label="A Title" id="TitleEntry" type="text" value="{{movie.title}}">                
+        </div> 
+    </div>
+</div>
+<div class="row">
+    <div class="col"> 
+        <div class="input-group">
+            <span class="input-group-text">Director</span>
+            <input class="form-control" name="Director" aria-label="A Director" id="Director" type="text" value="{{movie.director}}">                
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col"> 
+        <div class="input-group">
+            <span class="input-group-text">Writer</span>
+            <input class="form-control" name="Writer" aria-label="A Writer" id="Writer" type="text" value="{{movie.writers_to_string()}}">                
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">  
+        <div class="input-group">
+            <span class="input-group-text">Cast</span>
+            <input class="form-control" name="Title" aria-label="A Title" id="actors" type="text" value="{{movie.actors_to_string()}}">                
+        </div>
+    </div>
+</div>  
+<div class="row row-cols-2">
+    <div class="col-6">
+        <div class="input-group">
+            <span class="input-group-text">Year</span>
+            <input class="form-control" name="Year" aria-label="A Year" id="year" type="text" value="{{movie.year}}">                
+        </div> 
+    </div>
+    <div class="col-6">
+        <div class="input-group">
+            <span class="input-group-text">{{movie.RatingSource}}</span>
+            <input class="form-control" name="Rating" aria-label="A Rating" id="Rating" type="text" value="{{movie.RatingValueString}}">                
+        </div>
+    </div>                        
+    <div class="col-6">
+        <div class="input-group">
+            <span class="input-group-text">Personal Rating</span>
+            <input class="form-control" name="PersonalRating" aria-label="A personalRating" id="PersonalRating" type="text" value="{{movie.PersonalRating}}">                
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="input-group date" id="datepicker">
+            <span class="input-group-text">Date Viewed</span>
+            <input type="date" class="form-control" name="DateViewed" id="DateViewed" aria-label="A Date Viewed" value="{{movie.DateViewed.strftime('%Y-%m-%d')if movie.DateViewed else '2000-11-28'}}">
+        </div>
+    </div>
+</div> 
+<br>                    
+<h5 class="card-title">Plot Synopsis</h5>
+<p class="card-text">{{movie.plot}}</p>
+{% endmacro %}
+
+{% macro render_entries(movies, pagination=True) %}
+{% if pagination %}
+{% set _movies = movies.items %}
+{% else %}
+{% set _movies = movies %}
+{% endif %}
+
+{% for movie in _movies %}
+<div >
+    <h3>
+        <a class="text-dark" href="{{ url_for('media.update_entry', movie_id=movie.id) }}">{{ movie.title }}</a>
+    </h3>
+</div>
+<div class="row">
+    Director: {{ movie.director.first_name | truncate(500) | safe }} {{ movie.director.last_name | truncate(500) | safe }}
+</div>
+<div class="row"></div>
+    Cast: {% for actor in movie.actors %}
+    {{actor.first_name}} {{actor.last_name}}, 
+    {% endfor %}
+</div>
+{% endfor %}
+{% endmacro %}
+
+{% macro render_form_entry(form) %}
+{% set _form = form %}
+<div class="form-group">
+    {{ form.title.label }}
+    {% if form.title.errors %}
+    {% for e in form.title.errors %}
+    <p class="help-block">{{ e }}</p>
+    {% endfor %}
+    {% endif %}
+    {{ form.title(class_='form-control') }}
+</div>
+<div class="form-group">
+    {{ form.director.label }}
+    {% if form.director.errors %}
+    {% for e in form.director.errors %}
+    <p class="help-block">{{ e }}</p>
+    {% endfor %}
+    {% endif %}
+    {{ form.director(id="editor", class_='form-control') }}
+</div>
+<div class="form-group">
+    {{ form.actors.label }}
+    {% if form.actors.errors %}
+    {% for e in form.actors.errors %}
+    <p class="help-block">{{ e }}</p>
+    {% endfor %}
+    {% endif %}
+    {{ form.actors(id="editor", class_='form-control') }}
+</div>
+<div class="form-group">
+    {{ form.year.label }}
+    {% if form.year.errors %}
+    {% for e in form.year.errors %}
+    <p class="help-block">{{ e }}</p>
+    {% endfor %}
+    {% endif %}
+    {{ form.year(id="editor", class_='form-control') }}
+</div>
+{% endmacro %}

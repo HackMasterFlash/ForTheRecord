@@ -70,6 +70,10 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
+# Database 
+migrations/*
+database.db
+
 # Scrapy stuff:
 .scrapy
 
@@ -165,4 +169,19 @@ cython_debug/
 .idea/
 game_log_*
 
+# Visual Studio Code
 
+# .vscode/ stuffs
+.vscode/*
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
+# !.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+ForTheRecord.code-workspace

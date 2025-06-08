@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% import 'macros.html' as macros %}
+{% block title %}Update Media Entry{% endblock %}
+{% block body %}
+<div class="p-4 shadow-sm">
+    <div class="row">
+        <div class="col">
+            <h1>Edit Media Entry</h1>
+        </div>
+    </div>
+
+<div class="row">
+    <form method="POST" action="{{ url_for('.update_entry', movie_id=movie.id) }}">
+        {{ form.hidden_tag() }}
+        {{ macros.render_form_entry(form) }}
+  <!--
+        <div class="form-group">
+            {{ form.title.label }}
+            {% if form.title.errors %}
+            {% for e in form.title.errors %}
+            <p class="help-block">{{ e }}</p>
+            {% endfor %}
+            {% endif %}
+            {{ form.title(class_='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.director.label }}
+            {% if form.director.errors %}
+            {% for e in form.director.errors %}
+            <p class="help-block">{{ e }}</p>
+            {% endfor %}
+            {% endif %}
+            {{ form.director(id="editor", class_='form-control') }}
+        </div>
+        -->
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+</div>
+</div>
+    {% endblock %}
+
+{% block js %}
+<script src="//cdn.ckeditor.com/ckeditor5/45.0.0/ckeditor5.umd.js">
+</script>
+<script>
+    CKEDITOR.replace('editor');
+</script>
+{% endblock %}
